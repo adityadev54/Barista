@@ -1,0 +1,150 @@
+@page "/Order"
+
+@* Order form and live receipt. Order.cshtml.cs handles the form actions. *@
+
+@model OrderModel
+@using System.Globalization
+@functions {
+    private static string Money(decimal amount) =>
+        amount.ToString("C2", CultureInfo.GetCultureInfo("en-US"));
+}
+@{
+    ViewData["Title"] = "Order";
+    var entry = Model.Entry;
+    IMenuItemAddOn[] extras = [new OatMilkSwap(), new VanillaColdFoam(), new CaramelDrizzle()];
+}
+<header class="page-intro">
+    <h1>@(entry?.Name ?? "Order")</h1>
+</header>
+<div class="row gx-lg-5 gy-4 align-items-start order-layout">
+    <div class="col-lg-7">
+        @if (Model.Ticket is { } ticket)
+        {
+            <section class="order-confirmation" role="status">
+                <h2>Order #@ticket.Number placed</h2>
+                <p>@ticket.Item</p>
+                <a asp-page="/Ordering/Menu" class="catalog-action">Back to menu</a>
+            </section>
+        }
+        else if (entry is not null && Model.Available)
+        {
+            <form method="post" asp-page="/Ordering/Order" class="order-form" id="order-form"
+                  data-quote-url="@Url.Page("/Ordering/Order", "Quote")">
+                <input asp-for="Input.Item" type="hidden" />
+                <input asp-for="RequestId" type="hidden" />
+                @* Drinks have sizes and extras. Food starts at its fixed price. *@
+                @if (entry.MinimumSize is { } minimum)
+                {
+                    <fieldset class="form-section">
+                        <legend class="section-title">Size</legend>
+                        <div class="size-grid">
+                            @foreach (var size in Enum.GetValues<CupSize>().Where(size => size >= minimum))
+                            {
+                                <div>
+                                    <input asp-for="Input.Size" type="radio"
+                                           value="@size" id="size-@size" class="btn-check" />
+                                    <label for="size-@size" class="btn size-option">
+                                        <span>@size</span>
+                                        <small>@Money(entry.CreateItem(size).GetBasePrice())</small>
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </fieldset>
+                    <details class="order-options" open="@(Model.Input.OatMilk ||
+                        Model.Input.Shots > 0 || Model.Input.ColdFoam || Model.Input.Caramel)">
+                        <summary>
+                            <span>Add extras <small>Optional</small></span>
+                            <partial name="_DisclosureIcon" />
+                        </summary>
+                        <div class="shot-options">
+                            <div class="shot-label">
+                                <label asp-for="Input.Shots">Extra espresso shots</label>
+                                <span>+@Money(new ExtraShot().ApplyPrice()) each</span>
+                            </div>
+                            <div class="shot-stepper" role="group" aria-label="Extra espresso shots">
+                                <button type="button" data-shot-step="-1" aria-label="Remove a shot">
+                                    −
+                                </button>
+                                <input asp-for="Input.Shots" type="number" inputmode="numeric"
+                                       min="0" max="@Beverage.MaxExtraShots" step="1" data-shot-count />
+                                <button type="button" data-shot-step="1" aria-label="Add a shot">
+                                    +
+                                </button>
+                            </div>
+                        </div>
+                        <div class="option">
+                            <label>
+                                <input asp-for="Input.OatMilk" class="form-check-input" />
+                                @extras[0].Name
+                            </label>
+                            <span>+@Money(extras[0].ApplyPrice())</span>
+                        </div>
+                        <div class="option">
+                            <label>
+                                <input asp-for="Input.ColdFoam" class="form-check-input" />
+                                @extras[1].Name
+                            </label>
+                            <span>+@Money(extras[1].ApplyPrice())</span>
+                        </div>
+                        <div class="option">
+                            <label>
+                                <input asp-for="Input.Caramel" class="form-check-input" />
+                                @extras[2].Name
+                            </label>
+                            <span>+@Money(extras[2].ApplyPrice())</span>
+                        </div>
+                    </details>
+                }
+                else
+                {
+                    <p class="food-description">@entry.Description</p>
+                }
+                <details class="order-options" open="@(Model.Input.ReusableCup || Model.Input.HappyHour)">
+                    <summary>
+                        <span>Apply discounts <small>Optional</small></span>
+                        <partial name="_DisclosureIcon" />
+                    </summary>
+                    @if (entry.IsDrink)
+                    {
+                        <div class="option">
+                            <label>
+                                <input asp-for="Input.ReusableCup" class="form-check-input" />
+                                Brought a reusable cup
+                            </label>
+                            <span>−$0.50</span>
+                        </div>
+                    }
+                    <div class="option">
+                        <label>
+                            <input asp-for="Input.HappyHour" class="form-check-input" />
+                            Happy hour <small>2–4 PM</small>
+                        </label>
+                        <span>−15%</span>
+                    </div>
+                </details>
+            </form>
+        }
+    </div>
+    <aside class="col-lg-5 order-summary">
+        <div id="live-receipt" aria-live="polite" aria-atomic="true">
+            <partial name="/Pages/Shared/Receipts/_OrderReceipt.cshtml" model="Model" />
+        </div>
+        <p class="receipt-note" id="receipt-connection" role="status" hidden></p>
+        @if (Model.Ticket is null && Model.Available)
+        {
+            <div class="order-actions d-flex">
+                <button type="submit" form="order-form" class="btn action">Place order</button>
+                <noscript>
+                    <button type="submit" form="order-form" asp-page-handler="Refresh" class="catalog-action">
+                        Refresh receipt
+                    </button>
+                </noscript>
+            </div>
+        }
+    </aside>
+</div>
+@if (Model.Ticket is null && Model.Available)
+{
+    <script src="~/js/order.js" asp-append-version="true" defer></script>
+}

@@ -1,0 +1,31 @@
+@page "/MyOrders"
+
+@* Shows the signed-in client's order history from MyOrders.cshtml.cs. *@
+
+@model MyOrdersModel
+@using System.Globalization
+@{
+    ViewData["Title"] = "My orders";
+    var tickets = Model.Tickets;
+    var dollars = CultureInfo.GetCultureInfo("en-US");
+}
+<header class="page-intro">
+    <h1>My orders</h1>
+    <p>Check the status of orders placed while signed in.</p>
+</header>
+@if (tickets.Count == 0)
+{
+    <p class="empty-state">No orders yet. Choose an item from the menu to get started.</p>
+}
+@foreach (var ticket in tickets)
+{
+    <article class="admin-ticket">
+        <div class="admin-ticket-heading d-flex align-items-center justify-content-between">
+            <div>
+                <h2>#@ticket.Number · @ticket.Item</h2>
+                <p>@ticket.Receipt.Total.ToString("C2", dollars)</p>
+            </div>
+            <span class="admin-status">@ticket.Status</span>
+        </div>
+    </article>
+}

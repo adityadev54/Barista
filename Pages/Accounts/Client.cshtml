@@ -1,0 +1,40 @@
+@page "/Client"
+
+@* Client sign-in and registration form. Client.cshtml.cs handles both submissions. *@
+
+@model ClientModel
+@{
+    ViewData["Title"] = Model.Create ? "Create client account" : "Client sign-in";
+}
+<section class="staff-panel" aria-labelledby="client-title">
+    <header class="page-intro">
+        <h1 id="client-title">@ViewData["Title"]</h1>
+        <p>Track your orders and see when they’re ready.</p>
+    </header>
+    <form method="post" class="staff-form">
+        <input asp-for="ReturnUrl" type="hidden" />
+        <input asp-for="Create" type="hidden" />
+        <div asp-validation-summary="ModelOnly" class="validation" role="alert"></div>
+        <label asp-for="Username">Username</label>
+        <input asp-for="Username" class="form-control" autocomplete="username" minlength="3" maxlength="64" required />
+        <label asp-for="Password">Password</label>
+        <input asp-for="Password" type="password" class="form-control"
+               autocomplete="@(Model.Create ? "new-password" : "current-password")" minlength="12" maxlength="256"
+               required />
+        @if (Model.Create)
+        {
+            <label asp-for="ConfirmPassword">Confirm password</label>
+            <input asp-for="ConfirmPassword" type="password" class="form-control" autocomplete="new-password" minlength="12"
+                   maxlength="256" required />
+        }
+        <button type="submit" class="btn action">@(Model.Create ? "Create account" : "Sign in")</button>
+    </form>
+    <a asp-page="/Accounts/Client" asp-route-create="@((!Model.Create).ToString().ToLowerInvariant())"
+       asp-route-returnUrl="@Model.ReturnUrl" class="back-link d-block text-center">
+        @(Model.Create ? "Already have an account? Sign in" : "New to Barista? Create an account")
+    </a>
+    @if (!Model.Create && User.Identity?.IsAuthenticated != true)
+    {
+        <a asp-page="/Accounts/Staff" class="back-link d-block text-center">Staff sign-in</a>
+    }
+</section>

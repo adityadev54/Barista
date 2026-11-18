@@ -1,0 +1,54 @@
+@page "/Menu"
+
+@* Shows available menu items. This page only reads the catalog, so it has no page-model file. *@
+
+@using System.Globalization
+@inject OrderWorkspace Workspace
+@{
+    ViewData["Title"] = "Menu";
+    var dollars = CultureInfo.GetCultureInfo("en-US");
+    var items = MenuCatalog.Items.Where(item => Workspace.IsAvailable(item.Key)).ToArray();
+    ViewData["ShowMenuSearch"] = items.Length > 0;
+}
+<header class="page-intro">
+    <h1>Menu</h1>
+    <p>Choose a drink or a bite.</p>
+</header>
+@foreach (var group in items.GroupBy(item => item.IsDrink))
+{
+    <section class="menu-section" data-menu-group>
+        <h2>@(group.Key ? "Drinks" : "Food")</h2>
+        <div class="row g-3">
+            @foreach (var item in group)
+            {
+                <div class="col-6 col-lg-4 col-xl-3 col-xxl" data-menu-item
+                     data-search="@item.Name @item.Description @(item.IsDrink ? "drink" : "food")">
+                    <a asp-page="/Ordering/Order" class="menu-card d-flex flex-column h-100"
+                       asp-route-Input.Item="@item.Key"
+                       asp-route-Input.Size="@item.MinimumSize">
+                        <div class="menu-image">
+                            <img src="@item.Image" alt="" />
+                        </div>
+                        <div class="menu-card-body d-flex flex-column flex-fill">
+                            <h3>@item.Name</h3>
+                            <p>@item.Description</p>
+                            <div class="menu-card-price d-flex justify-content-between gap-2 mt-auto">
+                                <span>@(item.IsDrink ? "From " : "")@item.Price.ToString("C2", dollars)</span>
+                                <svg aria-hidden="true"><use href="/icons.svg#arrow"></use></svg>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </section>
+}
+@if (items.Length == 0)
+{
+    <p class="empty-state">The menu is temporarily unavailable.</p>
+}
+else
+{
+    <p class="empty-state" id="menu-no-matches" hidden>No menu items match your search.</p>
+    <script src="~/js/menu.js" asp-append-version="true" defer></script>
+}

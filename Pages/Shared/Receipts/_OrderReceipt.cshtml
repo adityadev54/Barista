@@ -1,0 +1,64 @@
+@* Shared receipt markup for first render and automatic updates. Prices come from OrderModel. *@
+@model OrderModel
+@using System.Globalization
+@functions {
+    private static string Money(decimal amount) =>
+        amount.ToString("C2", CultureInfo.GetCultureInfo("en-US"));
+}
+<section class="receipt" aria-labelledby="receipt-title">
+    <div class="receipt-heading d-flex align-items-center">
+        <svg aria-hidden="true"><use href="/icons.svg#receipt"></use></svg>
+        <h2 id="receipt-title">Order summary</h2>
+    </div>
+    @if (Model.Receipt is { } receipt)
+    {
+        <dl class="receipt-lines">
+            @for (var index = 0; index < receipt.Lines.Count; index++)
+            {
+                var line = receipt.Lines[index];
+                <div class="d-flex justify-content-between">
+                    <dt>
+                        @line.Name
+                        @if (index == 0 && Model.Entry?.IsDrink == true && Model.Ticket is null)
+                        {
+                            <small>@Model.Input.Size</small>
+                        }
+                    </dt>
+                    <dd>@Money(line.Amount)</dd>
+                </div>
+            }
+        </dl>
+        <div class="total d-flex justify-content-between">
+            <span>Total</span>
+            <strong>@Money(receipt.Total)</strong>
+        </div>
+        <div class="prep d-flex align-items-center">
+            <svg aria-hidden="true"><use href="/icons.svg#clock"></use></svg>
+            Estimated prep <strong>@receipt.PrepMinutes min</strong>
+        </div>
+    }
+    else
+    {
+        <p class="receipt-note">@Model.ReceiptError</p>
+    }
+</section>
+@if (Model.Receipt is { } priced)
+{
+    <details class="trace">
+        <summary>
+            <svg aria-hidden="true"><use href="/icons.svg#code"></use></svg>
+            <strong>Under the hood</strong>
+            <partial name="_DisclosureIcon" />
+        </summary>
+        <ol>
+            @foreach (var step in priced.Trace)
+            {
+                <li>
+                    <small>@step.Contract</small>
+                    <code>@step.ClassName</code>
+                    <span>@step.Detail</span>
+                </li>
+            }
+        </ol>
+    </details>
+}

@@ -1,0 +1,603 @@
+/* Shared palette and focus styles. Bootstrap supplies layout and form defaults. */
+:root {
+    color-scheme: light;
+    --canvas: #fff;
+    --surface: #f7f7f7;
+    --ink: #171717;
+    --muted: #575757;
+    --line: #d5d5d5;
+    --brand: #147345;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, sans-serif;
+}
+
+a { color: inherit; }
+svg { width: 18px; height: 18px; flex: none; }
+img { display: block; max-width: 100%; }
+
+:focus-visible,
+.btn-check:focus-visible + label {
+    outline: 2px solid var(--ink);
+    outline-offset: 4px;
+}
+
+/* Portal shell and navigation. */
+.portal {
+    display: grid;
+    grid-template-columns: 216px minmax(0, 1fr);
+}
+
+.portal-sidebar {
+    position: sticky;
+    top: 0;
+    display: flex;
+    height: 100vh;
+    flex-direction: column;
+    padding: 25px 16px;
+    border-right: 1px solid var(--line);
+    background: var(--surface);
+}
+
+.wordmark {
+    display: inline-flex;
+    align-items: center;
+    gap: .45rem;
+    padding-inline: 8px;
+    color: var(--ink);
+    font-size: 1.55rem;
+    font-weight: 800;
+    letter-spacing: -.065em;
+    text-decoration: none;
+}
+
+.wordmark b { color: var(--brand); }
+
+.portal-sidebar nav {
+    display: grid;
+    gap: 5px;
+    margin-top: 32px;
+}
+
+.portal-sidebar nav > * {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    padding: .65rem .7rem;
+    border-radius: 3px;
+    color: var(--muted);
+    font-size: .88rem;
+    text-decoration: none;
+}
+
+.portal-sidebar nav a:hover,
+.portal-sidebar nav [aria-current] {
+    background: #e8e8e8;
+    color: var(--ink);
+}
+
+.portal-sidebar nav [aria-current] svg { color: var(--ink); }
+
+.workspace-bar {
+    display: flex;
+    align-items: center;
+    gap: .65rem;
+    min-height: 64px;
+    padding-inline: clamp(20px, 4vw, 52px);
+    border-bottom: 1px solid var(--line);
+    color: var(--muted);
+    font-size: .85rem;
+}
+
+.workspace-bar strong { color: var(--ink); font-weight: 600; }
+
+.workspace-menu-link { color: var(--muted); text-decoration: none; }
+.workspace-menu-link:hover { color: var(--ink); }
+
+.workspace-content {
+    max-width: 1310px;
+    padding: 0 clamp(20px, 4vw, 52px) 46px;
+}
+
+h1 {
+    margin: 0;
+    font-size: clamp(1.9rem, 4vw, 2.6rem);
+    font-weight: 730;
+    letter-spacing: -.045em;
+}
+
+.action {
+    display: inline-flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: .74rem 1.1rem;
+    border-radius: 3px;
+    background: var(--ink);
+    color: var(--canvas);
+    font-size: .9rem;
+    font-weight: 720;
+}
+
+.action:hover,
+.action:focus-visible,
+.action:active {
+    background: #333 !important;
+    color: var(--canvas) !important;
+}
+
+.page-intro { padding-block: 32px 24px; }
+.page-intro p { margin: .45rem 0 0; color: var(--muted); }
+
+.back-link {
+    display: inline-block;
+    margin-bottom: .8rem;
+    color: var(--muted);
+    font-size: .85rem;
+    text-decoration: none;
+}
+
+.back-link:hover { color: var(--ink); }
+
+/* Catalog cards. */
+.menu-section + .menu-section { margin-top: 32px; }
+
+.menu-section h2 {
+    margin: 0 0 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.menu-card {
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    color: var(--ink);
+    text-decoration: none;
+}
+
+.menu-card:hover { border-color: var(--ink); color: var(--ink); }
+
+.menu-image {
+    display: grid;
+    height: 152px;
+    padding: 12px;
+    place-items: center;
+    background: var(--surface);
+}
+
+.menu-image img { width: 100%; height: 128px; object-fit: contain; }
+
+.menu-card-body { padding: .8rem; }
+
+.menu-card-body h3 { margin: 0; font-size: 1rem; font-weight: 700; }
+
+.menu-card-body p {
+    margin: .3rem 0 .8rem;
+    color: var(--muted);
+    font-size: .82rem;
+}
+
+.menu-card-price {
+    font-size: .87rem;
+    font-weight: 650;
+}
+
+.catalog-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .4rem;
+    padding: .45rem .65rem;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: var(--canvas);
+    color: var(--ink);
+    font-size: .82rem;
+    text-decoration: none;
+}
+
+.catalog-action:hover { border-color: var(--ink); color: var(--ink); }
+
+/* Order form, quantity control, and receipt. */
+.order-layout { padding-bottom: 20px; }
+
+.form-section { padding-block: 18px; }
+
+.section-title,
+.receipt h2 {
+    margin-bottom: 12px;
+    font-size: 1.12rem;
+    font-weight: 720;
+    letter-spacing: -.02em;
+}
+
+legend { margin-bottom: .45rem; color: var(--muted); font-size: .86rem; }
+.section-title { color: var(--ink); }
+
+.size-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.size-option {
+    display: grid;
+    width: 100%;
+    gap: .25rem;
+    padding: .7rem .3rem;
+    border-color: var(--line);
+    border-radius: 3px;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: .9rem;
+}
+
+.size-option small { font-weight: 500; }
+
+.size-option:hover,
+.btn-check:checked + .size-option {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--canvas);
+}
+
+.option,
+.option label {
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+}
+
+.option {
+    justify-content: space-between;
+    min-height: 43px;
+    font-size: .9rem;
+}
+
+.option + .option { border-top: 1px solid var(--line); }
+.option label { cursor: pointer; }
+.option span, .option small { color: var(--muted); white-space: nowrap; }
+
+.form-check-input {
+    flex: none;
+    margin: 0;
+    background-color: var(--surface);
+    border-color: var(--muted);
+}
+
+.form-check-input:checked {
+    background-color: var(--ink);
+    border-color: var(--ink);
+}
+
+.form-check-input:focus {
+    border-color: var(--ink);
+    box-shadow: none;
+}
+
+.validation ul {
+    margin: 1rem 0 0;
+    padding: .75rem;
+    border: 1px solid var(--ink);
+    color: var(--ink);
+    list-style: none;
+}
+
+.validation-summary-valid { display: none; }
+
+.receipt {
+    padding: clamp(18px, 3vw, 24px);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    background: var(--surface);
+}
+
+.receipt-heading,
+.prep { gap: .65rem; }
+
+.receipt h2 { margin: 0; }
+.receipt-lines { margin: 18px 0 0; }
+
+.receipt-lines > div,
+.total { gap: .75rem; }
+
+.receipt-lines > div { padding: .6rem 0; border-bottom: 1px solid var(--line); }
+.receipt-lines dt { font-weight: 500; }
+.receipt-lines dd { margin: 0; font-variant-numeric: tabular-nums; }
+.receipt-lines small { margin-left: .35rem; color: var(--muted); }
+
+.total { align-items: baseline; padding: .9rem 0; font-weight: 700; }
+.total strong { font-size: 2.4rem; letter-spacing: -.075em; }
+.prep { padding-top: .65rem; border-top: 1px dashed var(--line); font-size: .9rem; }
+.prep strong { margin-left: auto; }
+
+.receipt-note { margin: 1rem 0 0; color: var(--muted); }
+.trace { margin-top: 14px; border-block: 1px solid var(--line); }
+.trace summary { gap: .65rem; padding: 1rem 0; }
+.trace ol { margin: 0; padding: 0; list-style: none; }
+
+.trace li {
+    display: grid;
+    padding: .8rem 0;
+    border-top: 1px solid var(--line);
+    gap: .15rem;
+}
+
+.trace li small,
+.trace li span { color: var(--muted); font-size: .78rem; }
+.trace code { color: var(--ink); }
+
+@media (min-width: 992px) {
+    .order-summary { position: sticky; top: 24px; }
+}
+
+@media (max-width: 767px) {
+    .portal { display: block; }
+
+    .portal-sidebar {
+        position: static;
+        height: auto;
+        padding: 12px 16px 8px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+    }
+
+    .portal-sidebar nav { gap: 3px; margin-top: 8px; }
+    .portal-sidebar nav > * { gap: .35rem; padding: .45rem .6rem; }
+    .workspace-bar { min-height: 48px; }
+    .sidebar-account { margin-top: .65rem; padding-bottom: .55rem; }
+}
+
+@media (max-width: 540px) {
+    .menu-image { height: 126px; padding: 8px; }
+    .menu-image img { height: 110px; }
+}
+
+.order-options { border-top: 1px solid var(--line); }
+
+.order-options summary,
+.trace summary {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    list-style: none;
+}
+
+.order-options summary::-webkit-details-marker,
+.trace summary::-webkit-details-marker { display: none; }
+
+.order-options summary { padding: .85rem 0; font-weight: 650; }
+
+.order-options summary small {
+    margin-left: .45rem;
+    color: var(--muted);
+    font-size: .78rem;
+    font-weight: 400;
+}
+
+.disclosure-icon { margin-left: auto; }
+details[open] > summary .disclosure-vertical { display: none; }
+
+.shot-options { padding: .25rem 4px .8rem 14px; }
+
+.shot-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+}
+
+.shot-label { margin-bottom: .35rem; font-size: .88rem; }
+.shot-label span { color: var(--muted); font-size: .8rem; }
+
+.shot-stepper {
+    display: inline-flex;
+    gap: 0;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+}
+
+.shot-stepper button,
+.shot-stepper input {
+    width: 42px;
+    height: 38px;
+    padding: 0;
+    border: 0;
+    background: var(--canvas);
+    color: var(--ink);
+    text-align: center;
+}
+
+.shot-stepper button { font-size: 1.2rem; }
+.shot-stepper button:hover:not(:disabled) { background: var(--surface); }
+.shot-stepper button:disabled { color: var(--muted); opacity: .45; }
+
+.shot-stepper input {
+    border-inline: 1px solid var(--line);
+    appearance: textfield;
+    font-variant-numeric: tabular-nums;
+}
+
+.shot-stepper input::-webkit-inner-spin-button,
+.shot-stepper input::-webkit-outer-spin-button { appearance: none; }
+
+.order-options .option { padding-inline: 14px 4px; }
+
+.order-actions { gap: .75rem; margin-top: 14px; }
+
+.food-description,
+.empty-state,
+.order-confirmation p { color: var(--muted); }
+
+.order-confirmation h2 { font-size: 1.2rem; }
+
+/* Order history and staff workspace. */
+.admin-heading,
+.admin-ticket-heading,
+.availability-row { gap: .75rem; }
+
+.admin-heading {
+    min-height: 42px;
+    margin-bottom: 10px;
+}
+
+.admin-ticket { padding: .7rem 0; border-top: 1px solid var(--line); }
+
+.admin-ticket h2 { margin: 0; font-size: .95rem; }
+.admin-ticket p { margin: .25rem 0 0; color: var(--muted); font-size: .85rem; }
+.admin-status { font-size: .82rem; font-weight: 650; }
+.ticket-adjustments { margin: .4rem 0 0; padding-left: 1rem; font-size: .83rem; }
+.availability-row strong { font-size: .9rem; }
+.availability-row small { display: block; color: var(--muted); }
+
+.staff-panel .back-link { margin-top: 1.4rem; }
+
+.staff-form {
+    display: grid;
+    gap: .65rem;
+    padding: 1rem;
+    border: 1px solid var(--line);
+}
+
+.staff-form label { font-size: .87rem; font-weight: 650; }
+
+.staff-form .form-control {
+    border-color: var(--line);
+    border-radius: 3px;
+}
+
+.staff-form .form-control:focus {
+    border-color: var(--ink);
+    box-shadow: none;
+}
+
+.staff-note { color: var(--muted); }
+
+
+.portal-navigation {
+    align-self: stretch;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.portal-navigation nav { width: 100%; }
+
+.portal-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .4rem .6rem;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    color: var(--ink);
+    font-size: .82rem;
+}
+
+.sidebar-account {
+    margin-top: auto;
+    padding: .85rem .7rem 0;
+    border-top: 1px solid var(--line);
+}
+
+.sidebar-account strong {
+    display: block;
+    overflow-wrap: anywhere;
+    font-size: .88rem;
+}
+
+.sidebar-account-actions {
+    gap: .35rem .8rem;
+    margin-top: .35rem;
+    font-size: .78rem;
+}
+
+.sidebar-account-actions a,
+.nav-signout {
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    text-decoration: none;
+}
+
+.sidebar-account-actions a:hover,
+.nav-signout:hover { color: var(--ink); }
+
+/* Center both account forms within the available viewport. */
+.auth-page { display: flex; flex-direction: column; }
+
+.auth-page .portal-sidebar {
+    position: static;
+    height: auto;
+    padding: 12px clamp(16px, 4vw, 40px);
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.auth-page .portal-workspace {
+    display: grid;
+    min-height: calc(100svh - 63px);
+    align-items: center;
+    padding-block: 28px;
+}
+
+.auth-page .workspace-content {
+    width: 100%;
+    max-width: none;
+    padding-bottom: 0;
+}
+
+.auth-page .staff-panel {
+    max-width: 430px;
+    margin-inline: auto;
+}
+
+.auth-page .page-intro { padding-top: 0; text-align: center; }
+.auth-page .staff-form .action { width: 100%; margin-top: .4rem; }
+
+.menu-search { width: min(70%, 300px); margin-left: auto; }
+
+.menu-search input {
+    min-height: 34px;
+    border-color: var(--line);
+    border-radius: 3px;
+    font-size: .85rem;
+}
+
+.admin-thumbnail {
+    width: 58px;
+    height: 50px;
+    flex: none;
+    object-fit: contain;
+}
+
+.availability-row {
+    padding: .6rem;
+    border: 1px solid var(--line);
+    border-radius: 3px;
+}
+
+.availability-name { flex: 1; }
+.admin-heading p { margin: 0; color: var(--muted); }
+
+.admin-metrics section {
+    height: 100%;
+    padding: 1rem;
+    border: 1px solid var(--line);
+}
+
+.admin-metrics h2 { font-size: .93rem; }
+.admin-metrics strong { font-size: 1.75rem; }
+
+@media (prefers-reduced-motion: no-preference) {
+    .trace[open] code { animation: trace-highlight .75s ease-out both; }
+
+    @keyframes trace-highlight {
+        from { color: var(--brand); background-color: #e3f2e8; }
+        to { color: var(--ink); background-color: transparent; }
+    }
+}

@@ -1,0 +1,102 @@
+@page "/Admin"
+
+@* Shows the queue, menu controls, or daily totals. Admin.cshtml.cs handles staff actions. *@
+
+@model AdminModel
+@using System.Globalization
+@{
+    var dollars = CultureInfo.GetCultureInfo("en-US");
+    ViewData["Title"] = Model.Section switch
+    {
+        "menu" => "Menu availability",
+        "overview" => "Daily overview",
+        _ => "Order queue"
+    };
+}
+<header class="page-intro">
+    <h1>@ViewData["Title"]</h1>
+</header>
+@if (Model.Section == "menu")
+{
+    <div class="row g-3">
+        @foreach (var item in MenuCatalog.Items)
+        {
+            var available = Model.IsAvailable(item.Key);
+            <div class="col-12 col-lg-6">
+                <article class="availability-row d-flex align-items-center justify-content-between">
+                    <img class="admin-thumbnail" src="@item.Image" alt="" />
+                    <div class="availability-name">
+                        <strong>@item.Name</strong>
+                        <small>@(available ? "Available" : "Hidden") · @item.Price.ToString("C2", dollars)</small>
+                    </div>
+                    <form method="post" asp-page-handler="Availability">
+                        <input type="hidden" name="item" value="@item.Key" />
+                        <input type="hidden" name="available" value="@(available ? "false" : "true")" />
+                        <button type="submit" class="catalog-action"
+                                aria-label="@(available ? "Hide" : "Show") @item.Name">
+                            @(available ? "Hide" : "Show")
+                        </button>
+                    </form>
+                </article>
+            </div>
+        }
+    </div>
+}
+else if (Model.Section == "overview")
+{
+    var today = Model.DailyTickets();
+    var completed = today.Where(ticket => ticket.Completed).ToArray();
+    <p class="empty-state">@DateTime.Today.ToString("dddd, MMMM d")</p>
+    <div class="row g-3 admin-metrics">
+        <div class="col-12 col-sm-4">
+            <section><h2>Orders placed</h2><strong>@today.Count</strong></section>
+        </div>
+        <div class="col-12 col-sm-4">
+            <section><h2>Orders handed off</h2><strong>@completed.Length</strong></section>
+        </div>
+        <div class="col-12 col-sm-4">
+            <section>
+                <h2>Completed order value</h2>
+                <strong>@completed.Sum(ticket => ticket.Receipt.Total).ToString("C2", dollars)</strong>
+            </section>
+        </div>
+    </div>
+}
+else
+{
+    var tickets = Model.Tickets;
+    <div class="admin-heading d-flex align-items-center justify-content-between">
+        <p>Prepare orders, then record each handoff.</p>
+        <a asp-page="/Administration/Admin" class="catalog-action">Refresh</a>
+    </div>
+    @if (tickets.Count == 0)
+    {
+        <p class="empty-state">No active orders.</p>
+    }
+    @foreach (var ticket in tickets)
+    {
+        <article class="admin-ticket">
+            <div class="admin-ticket-heading d-flex align-items-center justify-content-between">
+                <div>
+                    <h2>#@ticket.Number · @ticket.Item</h2>
+                    <p>@ticket.Status · @ticket.Receipt.Total.ToString("C2", dollars) · @ticket.Receipt.PrepMinutes min</p>
+                </div>
+                <form method="post" asp-page-handler="@(ticket.Ready ? "Complete" : "Ready")">
+                    <input type="hidden" name="number" value="@ticket.Number" />
+                    <button type="submit" class="catalog-action">
+                        @(ticket.Ready ? "Complete handoff" : "Mark ready")
+                    </button>
+                </form>
+            </div>
+            @if (ticket.Receipt.Lines.Count > 1)
+            {
+                <ul class="ticket-adjustments">
+                    @foreach (var line in ticket.Receipt.Lines.Skip(1))
+                    {
+                        <li>@line.Name</li>
+                    }
+                </ul>
+            }
+        </article>
+    }
+}

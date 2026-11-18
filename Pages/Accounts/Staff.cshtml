@@ -1,0 +1,44 @@
+@page "/Staff"
+
+@* Staff sign-in and one-time setup form. Staff.cshtml.cs handles both submissions. *@
+
+@model StaffModel
+@{
+    ViewData["Title"] = Model.CanSetUp ? "Set up staff access" : "Staff sign-in";
+}
+<section class="staff-panel" aria-labelledby="staff-title">
+    <header class="page-intro">
+        <h1 id="staff-title">@ViewData["Title"]</h1>
+        <p>@(Model.CanSetUp
+            ? "Create the first staff account for this Barista installation."
+            : "Use your staff account to open the order queue and menu controls.")</p>
+    </header>
+    @if (Model.CanSetUp || !Model.SetupRequired)
+    {
+        <form method="post" asp-page-handler="@(Model.CanSetUp ? "Setup" : null)"
+              class="staff-form">
+            <div asp-validation-summary="ModelOnly" class="validation" role="alert"></div>
+            <label asp-for="Username">Username</label>
+            <input asp-for="Username" type="text" autocomplete="username"
+                   class="form-control" minlength="3" maxlength="64" required />
+            <label asp-for="Password">Password</label>
+            <input asp-for="Password" type="password"
+                   autocomplete="@(Model.CanSetUp ? "new-password" : "current-password")"
+                   class="form-control" minlength="12" maxlength="256" required />
+            @if (Model.CanSetUp)
+            {
+                <label asp-for="ConfirmPassword">Confirm password</label>
+                <input asp-for="ConfirmPassword" type="password" autocomplete="new-password"
+                       class="form-control" minlength="12" maxlength="256" required />
+            }
+            <button type="submit" class="btn action">
+                @(Model.CanSetUp ? "Create staff account" : "Sign in")
+            </button>
+        </form>
+    }
+    else
+    {
+        <p class="staff-note">Create the first staff account from localhost.</p>
+    }
+    <a asp-page="/Ordering/Menu" class="back-link d-block text-center">← Back to menu</a>
+</section>

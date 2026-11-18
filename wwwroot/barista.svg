@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Barista</title>
+  <rect x="2" y="2" width="60" height="60" rx="12" fill="#fff"/>
+  <g fill="none" stroke="#171717" stroke-width="3.5" stroke-linecap="round"
+     stroke-linejoin="round">
+    <path d="M16 30h28v7a13 13 0 0 1-13 13h-2a13 13 0 0 1-13-13z"/>
+    <path d="M44 33h4a5 5 0 0 1 0 10h-6M13 53h34"/>
+  </g>
+  <path fill="#147345" d="M30 27c-8 0-11-6-11-12 6 0 10 3 11 8
+    1-8 7-12 15-12 0 9-6 16-15 16z"/>
+</svg>

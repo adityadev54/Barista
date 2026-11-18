@@ -1,0 +1,132 @@
+@* Shared page frame. The sidebar switches links based on the current workspace. *@
+@{
+    var page = ViewContext.RouteData.Values["page"] as string;
+    var admin = page == "/Administration/Admin";
+    var auth = page is "/Accounts/Staff" or "/Accounts/Client";
+    var section = Context.Request.Query["section"].ToString();
+    var signedIn = !auth && !admin && User.Identity?.IsAuthenticated == true;
+}
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] · Barista</title>
+    <link rel="icon" type="image/svg+xml" href="~/barista.svg" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/barista.css" asp-append-version="true" />
+</head>
+
+<body class="portal @(auth ? "auth-page" : null)">
+    <aside class="portal-sidebar navbar navbar-expand-md">
+        <div class="d-flex w-100 align-items-center justify-content-between">
+            <a class="wordmark" asp-page="@(admin ? "/Administration/Admin" : "/Ordering/Menu")">
+                <img src="~/barista.svg" width="32" height="32" alt="" />
+                <span>barista<b>.</b></span>
+            </a>
+            @if (!auth)
+            {
+                <button class="navbar-toggler portal-toggle" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#portal-navigation" aria-controls="portal-navigation" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <svg aria-hidden="true">
+                        <use href="/icons.svg#catalog"></use>
+                    </svg>
+                    <span>Menu</span>
+                </button>
+            }
+        </div>
+        @if (!auth)
+        {
+            <div id="portal-navigation" class="collapse navbar-collapse portal-navigation">
+                <nav aria-label="Barista workspace">
+                    @if (admin)
+                    {
+                        <a asp-page="/Administration/Admin" aria-current="@(section == "" ? "page" : null)">
+                            <svg aria-hidden="true">
+                                <use href="/icons.svg#receipt"></use>
+                            </svg>
+                            Order queue
+                        </a>
+                        <a asp-page="/Administration/Admin" asp-route-section="menu"
+                           aria-current="@(section == "menu" ? "page" : null)">
+                            <svg aria-hidden="true">
+                                <use href="/icons.svg#catalog"></use>
+                            </svg>
+                            Menu
+                        </a>
+                        <a asp-page="/Administration/Admin" asp-route-section="overview"
+                           aria-current="@(section == "overview" ? "page" : null)">
+                            <svg aria-hidden="true">
+                                <use href="/icons.svg#clock"></use>
+                            </svg>
+                            Daily overview
+                        </a>
+                    }
+                    else
+                    {
+                        <a asp-page="/Ordering/Menu"
+                           aria-current="@(page is "/Ordering/Menu" or "/Ordering/Order" ? "page" : null)">
+                            <svg aria-hidden="true">
+                                <use href="/icons.svg#catalog"></use>
+                            </svg>
+                            Menu
+                        </a>
+                        <a asp-page="/Ordering/MyOrders" aria-current="@(page == "/Ordering/MyOrders" ? "page" : null)">
+                            <svg aria-hidden="true">
+                                <use href="/icons.svg#receipt"></use>
+                            </svg>
+                            My orders
+                        </a>
+                    }
+                </nav>
+                <div class="sidebar-account">
+                    <strong>@(User.Identity?.Name ?? "Guest")</strong>
+                    @if (admin || signedIn)
+                    {
+                        <small class="text-body-secondary">@(admin ? "Staff account" : "Client account")</small>
+                    }
+                    <div class="sidebar-account-actions d-flex flex-wrap">
+                        @if (admin || signedIn)
+                        {
+                            <form method="post" asp-page="@(admin ? "/Accounts/Staff" : "/Accounts/Client")"
+                                  asp-page-handler="SignOut">
+                                <button type="submit" class="nav-signout">Sign out</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-page="/Accounts/Client">Sign in</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </aside>
+    <div class="portal-workspace">
+        @if (!auth)
+        {
+            <header class="workspace-bar">
+                @if (page == "/Ordering/Order")
+                {
+                    <a asp-page="/Ordering/Menu" class="workspace-menu-link">Menu</a>
+                    <span aria-hidden="true">/</span>
+                }
+                <strong>@ViewData["Title"]</strong>
+                @if (page == "/Ordering/Menu" && ViewData["ShowMenuSearch"] is true)
+                {
+                    <div class="menu-search">
+                        <input type="search" id="menu-search" class="form-control" aria-label="Search menu"
+                               placeholder="Search menu" autocomplete="off" />
+                        <span class="visually-hidden" id="menu-results" role="status"></span>
+                    </div>
+                }
+            </header>
+        }
+        <main class="workspace-content">@RenderBody()</main>
+    </div>
+    <script src="~/lib/bootstrap/bootstrap.bundle.min.js" defer></script>
+</body>
+
+</html>
